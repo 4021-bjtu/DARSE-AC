@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this reference implementation, please cite the published paper."
+title: "DARSE-AC Reference Implementation"
+type: software
+authors:
+  - family-names: Tan
+    given-names: Shuo
+version: 1.0.0
+date-released: 2026-09-08
+repository-code: "https://github.com/4021-bjtu/DARSE-AC"
+preferred-citation:
+  type: article
+  title: "The Regularization and Deconvolution Algorithm Combining Salient Edges and Average Curvature in High-quality Visual Communication"
+  authors:
+    - family-names: Tan
+      given-names: Shuo
+    - family-names: Dong
+      given-names: Lingye
+    - family-names: An
+      given-names: Limei
+  journal: "Information Technology and Control"
+  volume: 54
+  issue: 1
+  start: 234
+  end: 253
+  year: 2025
+  doi: "10.5755/j01.itc.54.1.38163"

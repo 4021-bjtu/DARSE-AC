@@ -1,0 +1,41 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.so
+.DS_Store
+Thumbs.db
+
+# User inputs and ad-hoc runs
+input/
+results/your_image/
+*.log
+serve_private.py
+presentation-pack.zip
+reproduction-pack.zip
+previews/
+source/
+prepare_source.py
+publish_github.sh
+generate_materials.py
+validate_deliverables.py
+01_research_one_slide.*
+02_speech_and_qa_zh.*
+03_methods_results_concepts_zh.*
+assets/paper_fig8a_attributed.png
+assets/paper_fig8a_attributed_raw.png
+assets/paper_fig8a_text_ablation.png
+
+# Generated bulk results are kept in the download bundle, not in git.
+results/
+
+# The README links to one small illustrative output, added explicitly with -f.
+validation_report.json
+file_manifest.json
+assets/paper_fig8a_attributed.png
+assets/paper_fig8a_attributed_raw.png
+assets/paper_fig8a_text_ablation.png
+
+# Office temporary files
+~$*.docx
+~$*.pptx
