@@ -1,6 +1,6 @@
 # Paper-to-Code Reconstruction / 论文到代码对照
 
-This is a clean, author-maintained reference implementation organized from the published algorithm. It is not an archival copy of the historical experiment tree. The paper link does not include the original dataset manifest, split list, learned model, or cultural-object images, so exact historical numbers are not claimed. 中文：这是第一作者依据发表论文整理并维护的参考实现，不是原实验目录的归档镜像；公开材料缺少完整数据清单、划分与若干实现细节，因此不宣称逐位重现历史运行结果。
+This document records how the DARSE-AC algorithm maps to the code in this repository: the discrete conventions, the HQS/FFT derivation, every implementation choice where the paper leaves details open, and the corresponding reading notes. 中文：本文档记录 DARSE-AC 论文算法到本仓库代码的映射：离散约定、HQS/FFT 推导、论文未明确处的实现选择，以及对应研读笔记。
 
 ## Source / 正式文
 
@@ -49,7 +49,7 @@ K_hat = (conj(Zx) Ax + conj(Zy) Ay) / (|Zx|²+|Zy|²+tau).
 | p.248,250: shared final nonblind methods, incompletely specified | Gradient-Tikhonov nonblind solve with regularisation .002 using estimated kernel | Not paper patch prior or nonlinear highlight treatment / 最终非盲恢复替代 |
 | Color input, grayscale kernel estimation then color restoration | CLI converts input to 8-bit grayscale and reports grayscale results only | Color pipeline, HDR and alpha handling are out of scope / 非彩色忠实复现 |
 | Unknown boundary and preprocessing | Periodic convolution for synthesis and solver; no alignment; full and radius-cropped scores | Matched synthetic boundary is optimistic; real photos may have seam artefacts / 真实边界不能直接视作已验证 |
-| Original experiments | Generated text+geometry, packaged skimage camera/coins; 2 kernels; Gaussian noise .005; seeds 2026,2027 | New local evaluation, not ICDAR/iNaturalist/GLADNet or cultural artifacts / 本次实测不等于文物实测 |
+| Original experiments | Generated text+geometry, packaged skimage camera/coins; 2 kernels; Gaussian noise .005; seeds 2025,2026 | New local evaluation, not ICDAR/iNaturalist/GLADNet or cultural artifacts / 本次实测不等于文物实测 |
 | ER and success not sufficiently defined | `ER_proxy=MSE(output,truth)/MSE(oracle_true_kernel,truth)`; success proxy <=2 | Never equate to 1.61 or 99.54%; oracle is a solver-specific reference, not a guaranteed bound / 不能与论文ER直接比较 |
 
 ## Trace Interpretation / 曲线解释

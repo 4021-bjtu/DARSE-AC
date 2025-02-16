@@ -35,7 +35,7 @@ def synthetic_image(size=160):
     draw = ImageDraw.Draw(canvas)
     font = ImageFont.load_default(size=max(12, size // 5))
     small = ImageFont.load_default(size=max(10, size // 8))
-    draw.text((size*.12, size*.12), 'TEXT 2026', font=font, fill=20)
+    draw.text((size*.12, size*.12), 'TEXT 2025', font=font, fill=20)
     draw.text((size*.12, size*.48), 'SYNTHETIC', font=small, fill=45)
     draw.text((size*.12, size*.71), 'NOT AN ARTIFACT', font=small, fill=45)
     draw.rectangle((size*.16, size, size*.88, size*1.75), outline=25, width=5)
@@ -182,7 +182,7 @@ def main():
     for name in ('demo', 'benchmark', 'ablation'):
         p = sub.add_parser(name)
         p.add_argument('--output', default=f'results/{name}')
-        p.add_argument('--seed', type=int, default=2026)
+        p.add_argument('--seed', type=int, default=2025)
         p.add_argument('--seeds', type=int, default=2)
         p.add_argument('--size', type=int, default=160)
         p.add_argument('--noise', type=float, default=.005)

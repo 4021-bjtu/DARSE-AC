@@ -1,62 +1,62 @@
 # DARSE-AC
 
-**Blind image deconvolution with salient edges and average-curvature regularization**
+**Combining Salient Edges and Average Curvature Regularization for Blind Image Deconvolution**
 
-This repository is maintained by the paper's first author, **Shuo Tan**, and provides the runnable Python reference implementation, experiment notes, and research records for DARSE-AC.
+Tan, S., Dong, L., An, L. (2025). *The Regularization and Deconvolution Algorithm Combining Salient Edges and Average Curvature in High-quality Visual Communication*. Information Technology and Control, 54(1), 234–253. [DOI: 10.5755/j01.itc.54.1.38163](https://doi.org/10.5755/j01.itc.54.1.38163)
 
-> Paper: Tan, S., Dong, L., An, L. (2025). *The Regularization and Deconvolution Algorithm Combining Salient Edges and Average Curvature in High-quality Visual Communication*. **Information Technology and Control, 54(1), 234–253**. [DOI: 10.5755/j01.itc.54.1.38163](https://doi.org/10.5755/j01.itc.54.1.38163)
+---
 
-## Motivation
+## Research Problem
 
-The project was motivated by the practical need to improve blurred and noisy rubbing images related to the culture of the ancient Zhongshan Kingdom. The paper formulates this application need as a general blind image-deconvolution problem: estimate both a sharp image and an unknown blur kernel while preserving important lettering and ornamental boundaries.
+Images acquired in degraded conditions — heritage documents, rubbings, text archives, low-light scenes — are often corrupted by motion blur, defocus, and noise. Blind deconvolution seeks to recover a sharp image from a single blurred observation, but the problem is severely ill-posed: both the latent image and an unknown blur kernel must be estimated simultaneously. Generic priors either over-smooth edges or amplify noise, especially where fine strokes and ornamentation carry the information.
 
-As first author, Shuo Tan led the programming implementation, experiments, image processing, visualization, and the main manuscript work. The theoretical direction and mathematical formulation were developed with guidance from Lingye Dong; Limei An helped establish the research connection.
+## Method
 
-## Pipeline
-
-The degradation model is:
+DARSE-AC formulates image deblurring as a joint variational problem with two complementary regularizers:
 
 ```text
-A ≈ I ⊗ k + n
+min_{I,k}  ‖k·I − A‖² + λ‖∇I − ∇z‖² + ξ‖∇I‖₀ + θ·Q(I)
+min_k      ‖∇z·k − ∇A‖² + τ‖k‖²
 ```
 
-The implementation follows this sequence:
+- **Salient-edge prior** explicitly selects major structures `z`, preserving lettering and stroke boundaries while suppressing texture that would mislead kernel estimation;
+- **Average-curvature (AC) regularization** interprets intensity as a height field and constrains local bending energy in non-edge regions, mitigating staircase artifacts;
+- **HQS splitting** introduces auxiliary variables and decomposes the objective into tractable subproblems;
+- **FFT-based closed-form updates** solve the image subproblem in the frequency domain;
+- The fuzzy kernel is estimated in the gradient domain with ridge regularization, followed by nonnegativity and normalization;
+- A **coarse-to-fine pyramid** refines image and kernel across scales.
 
-1. Convert the observation to grayscale and compute gradients.
-2. Extract a main structure `z` and salient edges.
-3. Combine data fitting, edge consistency, gradient `L0`, and average-curvature constraints.
-4. Split the difficult objective with HQS auxiliary variables `alpha` and `beta`.
-5. Solve the quadratic image update in the Fourier domain with FFT.
-6. Estimate the blur kernel in the gradient domain and project it to a nonnegative normalized kernel.
-7. Run the image/kernel alternation from coarse to fine over an image pyramid.
-8. Produce a final non-blind reconstruction and save the trace and kernel.
+![DARSE-AC pipeline](assets/darse_ac_flow_diagram.png)
 
-![DARSE-AC flow](assets/darse_ac_flow_diagram.png)
+## Results
 
-## Results reported in the paper
+The method is evaluated on text images (ICDAR2019), natural scenes (iNaturalist 2021), low-light images (GLADNet), and realistic blur (RESID), covering parameter sensitivity, module ablation, convergence, and cross-dataset generalization.
 
-These are values reported by the paper on public datasets. They are not measurements on ancient Zhongshan rubbing images.
+| Dataset | PSNR | SSIM | ER | Success rate |
+|---|--:|--:|--:|--:|
+| iNaturalist 2021 | **31.03 dB** | **0.96** | **1.61** | **99.54%** |
+| ICDAR2019 | 30.29 dB | 0.96 | — | — |
+| GLADNet | 25.16 dB | 0.90 | — | — |
+| RESID (total) | 20.56 dB | — | — | — |
 
-| Evaluation | Reported result | Role |
-|---|---:|---|
-| iNaturalist 2021 | PSNR **31.03 dB**, SSIM **0.96**, ER **1.61**, success **99.54%** | Quantitative comparison |
-| ICDAR2019 | PSNR **30.29 dB**, SSIM **0.96** | Text restoration and ablation |
-| GLADNet | PSNR **25.16 dB**, SSIM **0.90** | Low-light cross-dataset validation |
-| RESID | Total PSNR **20.56 dB** | Realistic-blur visual and quantitative evaluation |
+**Key findings:**
 
-The paper's central conclusion is that salient-edge selection and AC regularization are complementary: the first preserves major structures, while the second suppresses unwanted curvature in non-edge regions. The reported objective curves become relatively flat after about ten iterations, while strong noise and spatially varying blur remain limitations.
+- Salient-edge selection and AC regularization are complementary; their joint use restores text regions more clearly than either module alone.
+- The improved objective curve flattens within roughly ten iterations, while average kernel similarity increases with the number of iterations.
+- The method attains the best quantitative performance on iNaturalist 2021 against eight baselines, and generalizes across datasets.
+- Strong noise and spatially varying blur remain open challenges.
 
-## Published visual example
+![Paper Figure 8 – ICDAR2019 text ablation](assets/paper_fig8a_attributed_montage.png)
 
-The following is an attributed crop of Figure 8 from the paper, showing the ICDAR2019 text ablation. It is not generated by this repository and is not a cultural-artifact image.
+*Excerpt of Fig. 8 from the published paper (λ=0, θ=0, DARSE-AC). Full settings are described in the paper.*
 
-![Published Figure 8](assets/paper_fig8_full_attributed.png)
+## Application Context
 
-The figure belongs to Shuo Tan, Lingye Dong, Limei An, and the relevant rights holders. The journal page does not confirm a CC license; the paper excerpt is outside the code license.
+The work was motivated by restoring blurred, noisy rubbing images of the ancient Zhongshan Kingdom for use in design-material extraction. The paper establishes and validates the algorithm on public datasets; deployment on actual cultural-object imagery requires authorized sources, expert stroke-fidelity assessment, and artifact review.
 
-## Quick start
+## Code
 
-Python 3.11 or a compatible version is recommended. The implementation runs on CPU and does not require CUDA or pretrained weights.
+The implementation mirrors the paper's pipeline:
 
 ```bash
 python -m venv .venv
@@ -66,46 +66,20 @@ python -m venv .venv
 .venv/bin/python experiment.py benchmark --output results/benchmark
 .venv/bin/python experiment.py ablation --output results/ablation
 .venv/bin/python -m pytest -q --junitxml=results/pytest.xml
-```
 
-For a user image:
-
-```bash
 .venv/bin/python experiment.py deblur input.png \
   --output results/your_image --kernel-size 15 --levels 3 --outer 5
 ```
 
-The command writes `restored.png`, a floating-point `restored.npz`, `trace.json`, and `config.json`. Current scope is grayscale input; HDR, joint color restoration, and spatially varying kernels are outside this reference implementation.
-
-## Local engineering validation
-
-The fixed synthetic benchmark contains three image types, two blur kernels, and two noise seeds (12 cases), plus five module ablations. The current numerical and CLI suite has **30 passing tests**. On this local run, the complete method reaches mean PSNR 21.668 dB and mean SSIM 0.6227. These values validate the engineering path only and must not be compared directly with the paper's public-dataset results.
-
-![Local synthetic example](results/demo/text_geometry_motion_seed2026/comparison.png)
-
-The image above is a generated text-and-geometry example, not a cultural artifact and not an original paper sample. Per-case metrics, configurations, traces, and ablations are stored under `results/`.
-
-## Repository map
-
-| File | Description |
+| File | Contents |
 |---|---|
-| `darse_ac.py` | Operators, AC discretization, L0 thresholding, FFT image update, kernel estimation, pyramid, and final restoration |
-| `experiment.py` | `demo`, `benchmark`, `ablation`, and `deblur` commands |
-| `test_darse_ac.py` | Numerical operators, FFT normal equations, kernel normalization, determinism, and CLI tests |
-| `RECONSTRUCTION.md` | Equation-to-code conventions and disclosed implementation choices |
-| `assets/` | Flow diagrams, experiment map, and attributed paper figure |
+| `darse_ac.py` | Gradients/adjoints, periodic convolution, AC discretization, L0 thresholding, FFT image update, kernel estimation, pyramid, final restoration |
+| `experiment.py` | `demo`, `benchmark`, `ablation`, `deblur` commands |
+| `test_darse_ac.py` | Numerical operators, FFT normal equations, kernel normalization, determinism, CLI tests |
+| `RECONSTRUCTION.md` | Equation-to-code conventions and discretization choices |
+| `assets/` | Pipeline diagrams and attributed paper figures |
 
-## Reproducibility scope
-
-This is an author-maintained reference implementation organized from the published algorithm, not an archival copy of the historical experiment environment. The paper link does not provide the original source tree, complete sample IDs, split files, blur-generation protocol, or all post-processing details, so bitwise reproduction of the published numbers is not claimed.
-
-The repository makes the following choices explicit: grayscale `[0, 1]` images, periodic boundaries, centered odd kernels, an FFT derivation from the joint objective, a reproducible discrete AC surrogate, frozen-weight structure guidance, gradient-domain ridge kernel estimation, nonnegative normalization, and a finite coarse-to-fine schedule. Where the paper does not fully define ER and success, the local scripts use separately named `ER_proxy` values rather than silently relabeling them as paper metrics.
-
-The packaged synthetic benchmark validates the engineering path only. It is not a replacement for ICDAR2019, iNaturalist 2021, GLADNet, RESID, or authorized cultural-object data. Real rubbing-image deployment requires provenance records, expert review, stroke-faithfulness checks, and explicit artifact analysis.
-
-## Note
-
-This repository contains the research code, experiment notes, and public result excerpts only. Personal defense materials such as presentation slides and scripts are not published here; the full paper is available through the DOI above.
+Implementation conventions (grayscale `[0,1]`, centered odd kernels, periodic boundaries, HQS schedule, AC discrete surrogate) are documented in `RECONSTRUCTION.md`. Reported figures and metrics are quotes from the publication; paper figures remain with the authors and rights holders per journal terms.
 
 ## Citation
 
@@ -121,5 +95,3 @@ This repository contains the research code, experiment notes, and public result 
   doi     = {10.5755/j01.itc.54.1.38163}
 }
 ```
-
-Code and locally generated examples follow the repository license. The published paper excerpt, journal layout, and third-party sample images do not automatically inherit that license; see `NOTICE.md`.
