@@ -28,13 +28,7 @@ assets/paper_fig8a_text_ablation.png
 
 # Generated bulk results are kept in the download bundle, not in git.
 results/
-
-# The README links to one small illustrative output, added explicitly with -f.
-validation_report.json
-file_manifest.json
-assets/paper_fig8a_attributed.png
-assets/paper_fig8a_attributed_raw.png
-assets/paper_fig8a_text_ablation.png
+matlab/out/
 
 # Office temporary files
 ~$*.docx

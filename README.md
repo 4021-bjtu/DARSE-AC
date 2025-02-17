@@ -78,8 +78,14 @@ python -m venv .venv
 | `darse_ac.py` | Gradients/adjoints, periodic convolution, AC discretization, L0 thresholding, FFT image update, kernel estimation, pyramid, final restoration |
 | `experiment.py` | `demo`, `benchmark`, `ablation`, `deblur` commands |
 | `test_darse_ac.py` | Numerical operators, FFT normal equations, kernel normalization, determinism, CLI tests |
+| `matlab/` | Toolbox-free MATLAB / Octave implementation of the same pipeline |
 | `RECONSTRUCTION.md` | Equation-to-code conventions and discretization choices |
 | `assets/` | Pipeline diagrams and attributed paper figures |
+
+A matching **MATLAB / Octave** implementation lives in `matlab/` (see
+`matlab/README.md`). It runs on R2016b+ and GNU Octave 6+ using core functions
+only, and reproduces the same operators, HQS schedule, curvature surrogate, and
+FFT updates.
 
 Implementation conventions (grayscale `[0,1]`, centered odd kernels, periodic boundaries, HQS schedule, AC discrete surrogate) are documented in `RECONSTRUCTION.md`. Reported paper figures and metrics are quotes from the publication; figures remain with the authors and rights holders per the journal terms.
 
