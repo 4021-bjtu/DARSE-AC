@@ -46,6 +46,12 @@ The method is evaluated on text images (ICDAR2019), natural scenes (iNaturalist 
 - The method achieves the best quantitative performance on iNaturalist 2021 compared with eight baselines, and shows strong cross-dataset generalization.
 - Strong noise and spatially varying blur remain as open challenges.
 
+**Best-case local example (synthetic, seed 2024):**
+
+![Best-case synthetic restoration](assets/text_geometry_gaussian_seed2024.png)
+
+*Synthetic text + Gaussian blur (seed 2024, "TEXT 2024"): PSNR 19.24 → 21.52 dB (+2.28 dB), SSIM 0.73. The oracle column uses the true kernel (23.20 dB) as a non-blind reference; the blind reconstruction is the middle result. Local example only, not a paper result and not a cultural artifact.*
+
 ![Paper Figure 8 – ICDAR2019 text ablation](assets/paper_fig8a_attributed_montage.png)
 
 *Fig. 8 excerpt from the published paper: text-image restoration under parameter ablation (λ=0, θ=0, DARSE-AC). Full results and settings are described in the paper.*
